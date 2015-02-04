@@ -11,6 +11,17 @@ $(document).ready(function () {
     "dy": 0
   };
   var snakeArray = [];
+  var food = {
+    "x": 0,
+    "y": 0
+  };
+  foodRandom();
+
+  function foodRandom() {
+    food.x = Math.floor(Math.random() * (wScene / wSnakePart));
+    food.y = Math.floor(Math.random() * (hScene / wSnakePart));
+    console.log(food);
+  }
 
   function init() {
     direction = {
@@ -50,6 +61,14 @@ $(document).ready(function () {
     }
   }
 
+  function drawFood() {
+    ctx.fillStyle = "blue";
+    ctx.fillRect(food.x * wSnakePart,
+      food.y * wSnakePart,
+      wSnakePart - 1,
+      wSnakePart - 1);
+  }
+
   function snakeMove() {
     var headSnake = snakeArray[snakeArray.length - 1];
     snakeArray.push({
@@ -65,14 +84,23 @@ $(document).ready(function () {
     if (headSnake.x * wSnakePart + wSnakePart > wScene) init();
     if (headSnake.y < 0) init();
     if (headSnake.y * wSnakePart + wSnakePart > hScene) init();
+
+    if (headSnake.x === food.x && headSnake.y === food.y) {
+      snakeArray.push({
+        "x": headSnake.x + direction.dx,
+        "y": headSnake.y + direction.dy
+      });
+      foodRandom();
+    }
   }
 
   function gameLoop() {
     clearBackgroud();
     snakeMove();
     drawSnake();
+    drawFood();
     checkCollision();
-    setTimeout(gameLoop, 100);
+    setTimeout(gameLoop, 60);
   }
 
   function clearBackgroud() {
